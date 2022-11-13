@@ -4,10 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
-    <title>Document</title>
+    <script src="script.js" defer></script>
+    <title>Math</title>
 </head>
 <body>
-
+    <header>
+            <div>Math test</div>
+            <div id="headerField">Choose your topic:</div>
+    </header>
+    <main>
+        <div id="testField" class="invisible showTestFields"></div>
+        <div id="topicField" class="showTestFields"></div>
+    </main>
+    <footer>
+        <form id="resultsCheckForm" autocomplete="off" class="invisible showTestFields">
+            <label for="password">Password:</label>
+            <input type="password" id="passwordField" name="password">
+            <input type="submit" value="Check" />
+        </form>
+        <button id="returnButton" class="invisible showTestFields">Return to topics</button>
+    </footer>
 </body>
 </html>
