@@ -51,6 +51,7 @@ footer{
     background-color: beige;
     margin-bottom: 5px;
     animation: topicSlide 0.5s linear forwards;
+    visibility: hidden;
 }
 .invisible{
     display: none;
@@ -75,6 +76,6 @@ footer{
 }
 
 @keyframes topicSlide {
-    0%   {opacity: 0;transform: translateX(-20px);}
-    100% {opacity: 1;transform: translateX(0);}
+    0%   {opacity: 0;transform: translateX(-20px);visibility: visible;}
+    100% {opacity: 1;transform: translateX(0);visibility: visible;}
   }
