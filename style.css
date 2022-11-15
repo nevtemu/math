@@ -1,3 +1,74 @@
+.testTitle{
+    font-size: xx-large;
+    font-weight: 700;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    text-align: center;
+}
+
+
+header{
+    margin-bottom: 10px;
+}
+
+
+.radio-colors:checked + label {
+    color: blue;
+}
+
+
+/* Footer */
+footer{
+    display: flex;
+    margin-top: 20px;
+}
+#returnButton{
+    margin-left: auto;
+}
+
+
+#headerField{
+    font-size: x-large;
+    font-weight: 700;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.test{
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+}
+.question {
+    display: flex;
+    flex-direction: column;
+    background-color: beige;
+    border:2px solid gray;
+    border-radius: 10px;
+}
+#topicField{
+    margin-top: 10px;
+    font-size: large;
+}
+.topic{
+    background-color: beige;
+    margin-bottom: 5px;
+}
 .invisible{
     display: none;
+}
+.hidden{
+    visibility: hidden;
+}
+.answer-right{
+    color: green;
+}
+.answer-wrong{
+    color: darkred;
+}
+.question-right{
+    border-color: green;
+}
+.question-wrong{
+    border-color: darkred;
+}
+.questionText{
+    text-align: center;
 }

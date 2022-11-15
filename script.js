@@ -3,7 +3,6 @@ window.addEventListener('focus', cheatCatch);
 function cheatCatch (){
     console.log('focus')
 }
-
 //Topic selection
 const TOPICS = {primeNumbersTest:"Prime/composite numbers", squaresTest:"Squares"};
 const PASSWORD = "check";
@@ -15,30 +14,48 @@ const resultsCheckForm = document.querySelector("#resultsCheckForm");
 const passwordField = document.querySelector("#passwordField");
 const returnButton = document.querySelector("#returnButton");
 const testField = document.querySelector("#testField");
-
+const repeatButton = document.querySelector("#repeatButton");
 const showTestFields = document.querySelectorAll('.showTestFields');
 
 //Topic render
 let topicOutput = '';
-for (let topic in TOPICS){topicOutput += `<div onClick="${topic}()">${TOPICS[topic]}</div>`};
+for (let topic in TOPICS){topicOutput += `<div class="topic" id="${topic}" onClick="${topic}(event)">${TOPICS[topic]}</div>`};
 topicField.innerHTML=topicOutput;
 
 //Tests
-function primeNumbersTest () {
-    changeState(TOPICS.primeNumbersTest);
+function primeNumbersTest (event) {
+    if (event.target.id === 'repeatButton'){
+        resultsCheckForm.classList.toggle("invisible");
+        repeatButton.classList.toggle("invisible");
+    } else {
+        changeState(TOPICS.primeNumbersTest);
+    }
     const primeNumbers = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97];
     let output = '';
     for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
-        let number = generateRandomNumber(2,100);
+        let number;
+        let usedNumbers = [];
+        if (NUMBER_OF_QUESTIONS < 99){
+            usedNumbers = [];
+            do {number = generateRandomNumber(2,100);}
+            while (usedNumbers.includes(number))
+            usedNumbers.push(number)
+        }
+        else {
+            number = generateRandomNumber(2,100);
+        }
         let numberIsPrime = primeNumbers.includes(number);
-        output += `<div>${number}<input type="radio" name="variants${i}" id="userAnswer${i}">Prime</input><input type="radio" name="variants${i}">Composite</input><div id="correctAnswer${i}" class="correctAnswer invisible">${numberIsPrime}</div></div>`;
+        output += `<div class="question" id="question${i}"><span class="questionText">${number}</span><input type="radio" name="variants${i}" id="userAnswer${i}" class="invisible radio-colors"><label for="userAnswer${i}">Prime</label></input><input type="radio" name="variants${i}" id="userAnswer${i}a" class="invisible radio-colors"><label for="userAnswer${i}a">Composite</label></input><div id="correctAnswer${i}" class="correctAnswer hidden">${numberIsPrime}</div></div>`;
     }
-    testField.innerHTML += output;
+    testField.innerHTML = output;
+    // repeatButton.
+    repeatButton.addEventListener('click', primeNumbersTest);
 }
 
 //Checking results
 
 resultsCheckForm.addEventListener('submit', checkResults);
+
 function checkResults (event) {
     event.preventDefault();
     let userInput = event.srcElement[0].value;
@@ -53,14 +70,23 @@ function showAnswers(){
     userAnswersNodes.forEach(node => userAnswers.push(node.checked))
     const correctAnswersNodes = document.querySelectorAll('.correctAnswer');
     const correctAnswers = [];
-    correctAnswersNodes.forEach(node => correctAnswers.push(Boolean(node.innerHTML)));
-    showAnswerFields.forEach(field => field.classList.toggle('invisible'));
+    correctAnswersNodes.forEach(node => correctAnswers.push(node.innerHTML == "true" ? true : false));
+    showAnswerFields.forEach(field => field.classList.toggle('hidden'));
     console.log(userAnswers);
     console.log(correctAnswers);
-    //TODO styles and answer match
+
+    correctAnswers.forEach((correctAnswer, index) => {
+        let isCorrect = correctAnswer == userAnswers[index];
+        const questionField = document.querySelector(`#question${index}`);
+        const answerField = document.querySelector(`#correctAnswer${index}`);
+        answerField.classList.toggle(isCorrect ? "answer-right" : "answer-wrong");
+        questionField.classList.toggle(isCorrect ? "question-right" : "question-wrong")
+    })
+    resultsCheckForm.classList.toggle("invisible");
+    repeatButton.classList.toggle("invisible");
 }
 function passwordIncorrect(){
-    //TODO visuals
+    passwordField.classList.toggle("wrong")
 }
 
 //Return to topics
