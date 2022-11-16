@@ -15,7 +15,10 @@ const passwordField = document.querySelector("#passwordField");
 const returnButton = document.querySelector("#returnButton");
 const testField = document.querySelector("#testField");
 const repeatButton = document.querySelector("#repeatButton");
-const showTestFields = document.querySelectorAll('.showTestFields');
+
+let correctAnswers = [];
+let userAnswers = [];
+let testType;
 
 //Topic render
 let topicOutput = '';
@@ -26,17 +29,13 @@ for (let i=0; i<50; i++){
 topicField.innerHTML=topicOutput;
 
 //Tests
-function primeNumbersTest (event) {
-    if (event.target.id === 'repeatButton'){
-        resultsCheckForm.classList.toggle("invisible");
-        repeatButton.classList.toggle("invisible");
-    } else {
-        changeState(TOPICS.primeNumbersTest);
-    }
+function primeNumbersTest () {
+    renderer([returnButton, testField, resultsCheckForm], [topicField, repeatButton], TOPICS.primeNumbersTest)
     const primeNumbers = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97];
-    let output = '';
+    let output = resetVariables();
     for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
         let number;
+        //Make numbers unique (not repeated if possible)
         let usedNumbers = [];
         if (NUMBER_OF_QUESTIONS < 99){
             usedNumbers = [];
@@ -47,18 +46,50 @@ function primeNumbersTest (event) {
         else {
             number = generateRandomNumber(2,100);
         }
-        let numberIsPrime = primeNumbers.includes(number);
-        output += `<div class="question" id="question${i}"><span class="questionText">${number}</span><input type="radio" name="variants${i}" id="userAnswer${i}" class="invisible radio-colors"><label for="userAnswer${i}">Prime</label></input><input type="radio" name="variants${i}" id="userAnswer${i}a" class="invisible radio-colors"><label for="userAnswer${i}a">Composite</label></input><div id="correctAnswer${i}" class="correctAnswer hidden">${numberIsPrime}</div></div>`;
+        let isPrime = primeNumbers.includes(number);
+        correctAnswers.push(isPrime);
+        output += `<div class="question" id="question${i}">
+                    <span class="questionText">${number}</span>
+                    <input type="radio" name="variants${i}" id="userAnswer${i}" value="true" class="invisible radio-colors">
+                    <label for="userAnswer${i}">Prime</label>
+                    </input><input type="radio" name="variants${i}" id="userAnswer${i}a" value="false" class="invisible radio-colors">
+                    <label for="userAnswer${i}a">Composite</label></input>
+                    <div id="correctAnswer${i}" class="correctAnswer hidden">${isPrime ? "Prime" : "Composite"}</div></div>`;
     }
     testField.innerHTML = output;
-    //TODO return correctAnswers array
     repeatButton.addEventListener('click', primeNumbersTest);
+}
+function squaresTest (){
+    renderer([returnButton, testField, resultsCheckForm], [topicField, repeatButton], TOPICS.primeNumbersTest)
+    let output = resetVariables();
+    for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+        let number;
+        //Make numbers unique (not repeated if possible)
+        let usedNumbers = [];
+        if (NUMBER_OF_QUESTIONS < 16){
+            usedNumbers = [];
+            do {number = generateRandomNumber(0,15);}
+            while (usedNumbers.includes(number))
+            usedNumbers.push(number)
+        }
+        else {
+            number = generateRandomNumber(0,15);
+        }
+        let exponent = generateRandomNumber(1,3);
+        let correctAnswer = number ** exponent;
+        correctAnswers.push(correctAnswer);
+        output += `<div class="question" id="question${i}">
+                    <span class="questionText">${number} &sup${exponent};</span>
+                    <input type="text" id="userAnswer${i}">
+                    <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
+    }
+    testField.innerHTML = output;
+    console.log(correctAnswers)
+    repeatButton.addEventListener('click', squaresTest);
 }
 
 //Checking results
-
 resultsCheckForm.addEventListener('submit', checkResults);
-
 function checkResults (event) {
     event.preventDefault();
     let userInput = event.srcElement[0].value;
@@ -67,26 +98,27 @@ function checkResults (event) {
     PASSWORD === userInput ? showAnswers() : passwordIncorrect();
 }
 function showAnswers(){
-    const showAnswerFields = document.querySelectorAll('.correctAnswer');
-    const userAnswersNodes = document.querySelectorAll('[id^="userAnswer"]');
-    const userAnswers = [];
-    userAnswersNodes.forEach(node => userAnswers.push(node.checked))
-    const correctAnswersNodes = document.querySelectorAll('.correctAnswer');
-    const correctAnswers = [];
-    correctAnswersNodes.forEach(node => correctAnswers.push(node.innerHTML == "true" ? true : false));
-    showAnswerFields.forEach(field => field.classList.toggle('hidden'));
-    console.log(userAnswers);
-    console.log(correctAnswers);
-
+    //Get user responses
+    for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+        // let userAnswer = document.querySelector(`input[name="variants${i}"]:checked`);
+        // userAnswer ? userAnswers.push(userAnswer.value === "true" ? true : false) : userAnswers.push("No answer")
+        let userAnswer = document.querySelector(`#userAnswer${i}`).value;
+        userAnswers.push(userAnswer === '' ? "No answer" : parseInt(userAnswer))
+        console.log(userAnswers)
+    }
+    //Match with correct answers
     correctAnswers.forEach((correctAnswer, index) => {
         let isCorrect = correctAnswer == userAnswers[index];
+        if(isCorrect) results++;
+
         const questionField = document.querySelector(`#question${index}`);
         const answerField = document.querySelector(`#correctAnswer${index}`);
         answerField.classList.toggle(isCorrect ? "answer-right" : "answer-wrong");
         questionField.classList.toggle(isCorrect ? "question-right" : "question-wrong")
     })
-    makeInvisible([resultsCheckForm], true);
-    makeInvisible([repeatButton], false);
+    console.log(results)
+    const showAnswerFields = document.querySelectorAll('.correctAnswer');
+    renderer(Array.from(showAnswerFields).concat([repeatButton]), [resultsCheckForm], false)
 }
 function passwordIncorrect(){
     passwordField.classList.toggle("wrong")
@@ -94,24 +126,30 @@ function passwordIncorrect(){
 
 //Return to topics
 returnButton.addEventListener('click', returnToTopics);
-
 function returnToTopics () {
-    makeInvisible([repeatButton, returnButton, testField, resultsCheckForm], true);
-    makeInvisible([topicField], false);
+    renderer([topicField],[repeatButton, returnButton, testField, resultsCheckForm]);
 }
 
-function changeState(header = "Choose your topic:"){
-    showTestFields.forEach(field => field.classList.toggle('invisible'));
-    headerField.innerHTML = header;
-    testField.innerHTML = '';
-}
 function generateRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function makeInvisible (elements, isInvisible){
-    if (Array.isArray(elements) && typeof isInvisible == "boolean"){
-        elements.forEach(element => isInvisible ? element.classList.add("invisible") : element.classList.remove("invisible"))
+function renderer (visibleElements, invisibleElements, header = "Choose your test:"){ //header=false to keep same value
+    if (Array.isArray(visibleElements) && Array.isArray(invisibleElements)){
+        visibleElements.forEach(element => element.classList.remove("invisible", "hidden"));
+        invisibleElements.forEach(element => element.classList.add("invisible"));
+        if (header !== false) headerField.innerHTML = header;
     }
+    else {
+        console.alert("renderer function error")
+    }
+}
+
+function resetVariables (){
+    let output = '';
+    correctAnswers = [];
+    userAnswers = [];
+    results = 0;
+    return output;
 }
 
