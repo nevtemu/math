@@ -4,7 +4,10 @@ function cheatCatch (){
     console.log('focus')
 }
 //Topic selection
-const TOPICS = {primeNumbersTest:"Prime/composite numbers", squaresTest:"Squares"};
+const TOPICS = {prime:{description:"Prime and composite numbers", type:"multianswer"},
+                compare:{description:"Compare two numbers", type:"compare"},
+                round:{description:"Round number to nearest", type:"input"},
+                power:{description:"Square, cube, exponent", type:"input"}};
 const PASSWORD = "check";
 const NUMBER_OF_QUESTIONS = 10;
 
@@ -22,70 +25,26 @@ let testType;
 
 //Topic render
 let topicOutput = '';
-const animationDelay = 0.1;
-for (let i=0; i<50; i++){
-    for (let topic in TOPICS){topicOutput += `<div class="topic" id="${topic}" onClick="${topic}(event)" style="animation-delay:${i*animationDelay}s">${TOPICS[topic]}</div>`};
-}
+const animationDelay = 0.2;
+let animationCounter = 0;
+for (let topic in TOPICS){
+    topicOutput += `<div class="topic" id="${topic}" onClick="generateTest(${topic})" style="animation-delay:${animationCounter*animationDelay}s">${TOPICS[topic].description}</div>`;
+    animationCounter++};
 topicField.innerHTML=topicOutput;
 
-//Tests
-function primeNumbersTest () {
-    renderer([returnButton, testField, resultsCheckForm], [topicField, repeatButton], TOPICS.primeNumbersTest)
-    const primeNumbers = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97];
-    let output = resetVariables();
-    for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
-        let number;
-        //Make numbers unique (not repeated if possible)
-        let usedNumbers = [];
-        if (NUMBER_OF_QUESTIONS < 99){
-            usedNumbers = [];
-            do {number = generateRandomNumber(2,100);}
-            while (usedNumbers.includes(number))
-            usedNumbers.push(number)
-        }
-        else {
-            number = generateRandomNumber(2,100);
-        }
-        let isPrime = primeNumbers.includes(number);
-        correctAnswers.push(isPrime);
-        output += `<div class="question" id="question${i}">
-                    <span class="questionText">${number}</span>
-                    <input type="radio" name="variants${i}" id="userAnswer${i}" value="true" class="invisible radio-colors">
-                    <label for="userAnswer${i}">Prime</label>
-                    </input><input type="radio" name="variants${i}" id="userAnswer${i}a" value="false" class="invisible radio-colors">
-                    <label for="userAnswer${i}a">Composite</label></input>
-                    <div id="correctAnswer${i}" class="correctAnswer hidden">${isPrime ? "Prime" : "Composite"}</div></div>`;
-    }
-    testField.innerHTML = output;
-    repeatButton.addEventListener('click', primeNumbersTest);
+
+function generateTest (topic){
+    renderer([returnButton, testField, resultsCheckForm], [topicField, repeatButton], TOPICS[topic.id].description);
+    testType = topic.id;
+    repeatTest();
+    repeatButton.addEventListener('click', repeatTest); 
 }
-function squaresTest (){
-    renderer([returnButton, testField, resultsCheckForm], [topicField, repeatButton], TOPICS.primeNumbersTest)
-    let output = resetVariables();
-    for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
-        let number;
-        //Make numbers unique (not repeated if possible)
-        let usedNumbers = [];
-        if (NUMBER_OF_QUESTIONS < 16){
-            usedNumbers = [];
-            do {number = generateRandomNumber(0,15);}
-            while (usedNumbers.includes(number))
-            usedNumbers.push(number)
-        }
-        else {
-            number = generateRandomNumber(0,15);
-        }
-        let exponent = generateRandomNumber(1,3);
-        let correctAnswer = number ** exponent;
-        correctAnswers.push(correctAnswer);
-        output += `<div class="question" id="question${i}">
-                    <span class="questionText">${number} &sup${exponent};</span>
-                    <input type="text" id="userAnswer${i}">
-                    <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
-    }
+function repeatTest (){
+    resetVariables();
+    console.log(testType)
+    let output = generateTestType(testType);
+    // console.log(correctAnswers)
     testField.innerHTML = output;
-    console.log(correctAnswers)
-    repeatButton.addEventListener('click', squaresTest);
 }
 
 //Checking results
@@ -134,7 +93,7 @@ function generateRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function renderer (visibleElements, invisibleElements, header = "Choose your test:"){ //header=false to keep same value
+function renderer (visibleElements, invisibleElements, header = "Choose your topic:"){ //header=false to keep same value
     if (Array.isArray(visibleElements) && Array.isArray(invisibleElements)){
         visibleElements.forEach(element => element.classList.remove("invisible", "hidden"));
         invisibleElements.forEach(element => element.classList.add("invisible"));
@@ -146,10 +105,65 @@ function renderer (visibleElements, invisibleElements, header = "Choose your tes
 }
 
 function resetVariables (){
-    let output = '';
     correctAnswers = [];
     userAnswers = [];
     results = 0;
-    return output;
 }
 
+function generateTestType (topic){
+    let output = '';
+    switch(topic){
+        case "prime":
+            const primeNumbers = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97];
+            for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+                let number;
+                //Make numbers unique (not repeated if possible)
+                let usedNumbers = [];
+                if (NUMBER_OF_QUESTIONS < 99){
+                    usedNumbers = [];
+                    do {number = generateRandomNumber(2,100);}
+                    while (usedNumbers.includes(number))
+                    usedNumbers.push(number)
+                }
+                else {
+                    number = generateRandomNumber(2,100);
+                }
+                let isPrime = primeNumbers.includes(number);
+                correctAnswers.push(isPrime);
+                output += `<div class="question" id="question${i}">
+                            <span class="questionText">${number}</span>
+                            <input type="radio" name="variants${i}" id="userAnswer${i}" value="true" class="invisible radio-colors">
+                            <label for="userAnswer${i}">Prime</label>
+                            </input><input type="radio" name="variants${i}" id="userAnswer${i}a" value="false" class="invisible radio-colors">
+                            <label for="userAnswer${i}a">Composite</label></input>
+                            <div id="correctAnswer${i}" class="correctAnswer hidden">${isPrime ? "Prime" : "Composite"}</div></div>`;
+            }
+        break;
+        case "power":
+            for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+                let number;
+                //Make numbers unique (not repeated if possible)
+                let usedNumbers = [];
+                if (NUMBER_OF_QUESTIONS < 16){
+                    usedNumbers = [];
+                    do {number = generateRandomNumber(0,15);}
+                    while (usedNumbers.includes(number))
+                    usedNumbers.push(number)
+                }
+                else {
+                    number = generateRandomNumber(0,15);
+                }
+                let exponent = generateRandomNumber(1,3);
+                let correctAnswer = number ** exponent;
+                correctAnswers.push(correctAnswer);
+                output += `<div class="question" id="question${i}">
+                            <span class="questionText">${number} &sup${exponent};</span>
+                            <input type="text" id="userAnswer${i}">
+                            <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
+            }
+        break;
+        default:
+            console.error("Error in test type function")
+    }
+    return output;
+}
