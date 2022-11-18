@@ -28,23 +28,20 @@ let topicOutput = '';
 const animationDelay = 0.2;
 let animationCounter = 0;
 for (let topic in TOPICS){
-    topicOutput += `<div class="topic" id="${topic}" onClick="generateTest(${topic})" style="animation-delay:${animationCounter*animationDelay}s">${TOPICS[topic].description}</div>`;
+    topicOutput += `<div class="topic" id="${topic}" onClick="generateTest(event)" style="animation-delay:${animationCounter*animationDelay}s">${TOPICS[topic].description}</div>`;
     animationCounter++};
 topicField.innerHTML=topicOutput;
 
 
-function generateTest (topic){
-    renderer([returnButton, testField, resultsCheckForm], [topicField, repeatButton], TOPICS[topic.id].description);
-    testType = topic.id;
-    repeatTest();
-    repeatButton.addEventListener('click', repeatTest); 
-}
-function repeatTest (){
+function generateTest (event){
+    let source = event.srcElement.id;
+    if (source !== 'repeatButton'){testType = event.srcElement.id;}
+    renderer([returnButton, testField, resultsCheckForm], [topicField, repeatButton], TOPICS[testType].description);
     resetVariables();
-    console.log(testType)
     let output = generateTestType(testType);
     // console.log(correctAnswers)
     testField.innerHTML = output;
+    repeatButton.addEventListener('click', generateTest); 
 }
 
 //Checking results
@@ -57,27 +54,36 @@ function checkResults (event) {
     PASSWORD === userInput ? showAnswers() : passwordIncorrect();
 }
 function showAnswers(){
-    //Get user responses
-    for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
-        // let userAnswer = document.querySelector(`input[name="variants${i}"]:checked`);
-        // userAnswer ? userAnswers.push(userAnswer.value === "true" ? true : false) : userAnswers.push("No answer")
-        let userAnswer = document.querySelector(`#userAnswer${i}`).value;
-        userAnswers.push(userAnswer === '' ? "No answer" : parseInt(userAnswer))
-        console.log(userAnswers)
-    }
-    //Match with correct answers
+    getUserAnswers();
     correctAnswers.forEach((correctAnswer, index) => {
         let isCorrect = correctAnswer == userAnswers[index];
         if(isCorrect) results++;
-
         const questionField = document.querySelector(`#question${index}`);
         const answerField = document.querySelector(`#correctAnswer${index}`);
         answerField.classList.toggle(isCorrect ? "answer-right" : "answer-wrong");
         questionField.classList.toggle(isCorrect ? "question-right" : "question-wrong")
     })
-    console.log(results)
     const showAnswerFields = document.querySelectorAll('.correctAnswer');
     renderer(Array.from(showAnswerFields).concat([repeatButton]), [resultsCheckForm], false)
+}
+function getUserAnswers (){
+    switch(testType){
+        case "prime":
+            for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+                let userAnswer = document.querySelector(`input[name="variants${i}"]:checked`);
+                userAnswer ? userAnswers.push(userAnswer.value === "true" ? true : false) : userAnswers.push("No answer");
+            }
+        break;
+        case "power":
+            for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+                let userAnswer = document.querySelector(`#userAnswer${i}`).value;
+                userAnswers.push(userAnswer === '' ? "No answer" : parseInt(userAnswer))
+            }
+        break;
+        default:
+            console.error("Error in getUserAnswers function")
+    }
+    // console.log(userAnswers)
 }
 function passwordIncorrect(){
     passwordField.classList.toggle("wrong")
