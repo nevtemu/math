@@ -1,8 +1,3 @@
-//Cheat check
-window.addEventListener('focus', cheatCatch);
-function cheatCatch (){
-    console.log('focus')
-}
 //Topic selection
 const TOPICS = {prime:{description:"Prime and composite numbers", type:"multianswer"},
                 compare:{description:"Compare two numbers", type:"compare"},
@@ -22,14 +17,17 @@ const NUMBER_OF_QUESTIONS = 100;
 const topicField = document.querySelector("#topicField");
 const headerField = document.querySelector("#headerField");
 const resultsCheckForm = document.querySelector("#resultsCheckForm");
+const unlockForm = document.querySelector("#unlockForm");
 const passwordField = document.querySelector("#passwordField");
 const returnButton = document.querySelector("#returnButton");
 const testField = document.querySelector("#testField");
 const repeatButton = document.querySelector("#repeatButton");
+const cheatCover = document.querySelector("#cheatCover");
 
 let correctAnswers = [];
 let userAnswers = [];
 let testType;
+let isAnticheatOn = false;
 
 //Topic render
 let topicOutput = '';
@@ -50,6 +48,7 @@ function generateTest (event){
     console.log(correctAnswers)
     testField.innerHTML = output;
     repeatButton.addEventListener('click', generateTest); 
+    isAnticheatOn = true;
 }
 
 //Checking results
@@ -107,6 +106,7 @@ function passwordIncorrect(){
 returnButton.addEventListener('click', returnToTopics);
 function returnToTopics () {
     renderer([topicField],[repeatButton, returnButton, testField, resultsCheckForm]);
+    isAnticheatOn = false;
 }
 
 function generateRandomNumber(min, max) {
@@ -364,4 +364,17 @@ function generateTestType (topic){
 }
 function joinDigits (numberDigits){ //converts array of digits [1,2,3,4] into integer 1234
     return [...numberDigits].reverse().reduce((p, c, i) => {return p + c*(10**i)},  0);
+}
+
+//Cheat check
+window.addEventListener('focus', cheatCatch);
+function cheatCatch (){
+    if (isAnticheatOn){renderer([cheatCover],[],false)}
+}
+unlockForm.addEventListener('submit', unlock);
+function unlock (event){
+    event.preventDefault();
+    let userInput = event.srcElement[0].value;
+    if (!userInput) return;
+    if(PASSWORD === userInput) renderer([],[cheatCover],false)
 }

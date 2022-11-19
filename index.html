@@ -8,6 +8,14 @@
     <title>Math</title>
 </head>
 <body>
+    <div id="cheatCover" class="invisible">
+        <span class="cheatAlert">Did you try to cheat?</span>
+        <form id="unlockForm" autocomplete="off">
+            <label for="unlock">Password:</label>
+            <input type="password" id="unlock" name="unlock">
+            <input type="submit" value="&#128275; Unlock" />
+        </form>
+    </div>
     <header>
             <div class="testTitle">Math test</div>
             <div id="headerField">Choose your topic:</div>
@@ -18,12 +26,13 @@
     </main>
     <footer>
         <form id="resultsCheckForm" autocomplete="off" class="invisible ">
-            <label for="password">Password:</label>
+            <label for="passwordField">Password:</label>
             <input type="password" id="passwordField" name="password">
             <input type="submit" value="&#9745; Check" />
         </form>
         <button id="repeatButton" class="invisible">&#8634;  Repeat same test</button>
         <button id="returnButton" class="invisible ">&#8630; Return to topics</button>
     </footer>
+
 </body>
 </html>
