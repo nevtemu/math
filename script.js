@@ -2,7 +2,7 @@
 const TOPICS = {prime:{description:"Prime and composite numbers", type:"multianswer"},
                 compare:{description:"Compare two numbers", type:"compare"},
                 round:{description:"Round number to nearest", type:"input"},
-                sum:{description:"Addition and multiplication of 5-digit numbers", type:"input"},
+                sum:{description:"Addition and subtraction of 5-digit numbers", type:"input"},
                 multi:{description:"Multiply and divide", type:"input"},
                 multi10:{description:"Multiply and divide by 10, 100, 1000", type:"input"},
                 multi10multiples:{description:"Multiply and divide by multiples of 10, 100, 1000", type:"input"},
@@ -19,6 +19,7 @@ const headerField = document.querySelector("#headerField");
 const resultsCheckForm = document.querySelector("#resultsCheckForm");
 const unlockForm = document.querySelector("#unlockForm");
 const passwordField = document.querySelector("#passwordField");
+const unlockField = document.querySelector("#unlockField");
 const returnButton = document.querySelector("#returnButton");
 const testField = document.querySelector("#testField");
 const repeatButton = document.querySelector("#repeatButton");
@@ -152,10 +153,10 @@ function generateTestType (topic){
                 correctAnswers.push(isPrime);
                 output += `<div class="question" id="question${i}">
                             <span class="questionText">${number}</span>
-                            <input type="radio" name="variants${i}" id="userAnswer${i}" value="true" class="invisible radio-colors">
+                            <input type="radio" name="variants${i}" id="userAnswer${i}" value="true" class="invisible radio-colors"/>
                             <label for="userAnswer${i}">Prime</label>
-                            </input><input type="radio" name="variants${i}" id="userAnswer${i}a" value="false" class="invisible radio-colors">
-                            <label for="userAnswer${i}a">Composite</label></input>
+                            <input type="radio" name="variants${i}" id="userAnswer${i}a" value="false" class="invisible radio-colors"/>
+                            <label for="userAnswer${i}a">Composite</label>
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${isPrime ? "Prime" : "Composite"}</div></div>`;
             }
         break;
@@ -179,7 +180,7 @@ function generateTestType (topic){
                 let unicode = exponent <= 3 ? `&sup${exponent};` : `&#x207${exponent};`
                 output += `<div class="question" id="question${i}">
                             <span class="questionText">${number}${unicode}</span>
-                            <input type="text" id="userAnswer${i}" class="question">
+                            <input type="text" id="userAnswer${i}" class="question" maxlength="4" size="4">
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
             }
         break;
@@ -199,7 +200,7 @@ function generateTestType (topic){
                 correctAnswers.push(correctAnswer);
                 output += `<div class="question" id="question${i}">
                             <span class="questionText">${number1}</span>
-                            <input type="text" id="userAnswer${i}" class="question">
+                            <input type="text" id="userAnswer${i}" class="question" maxlength="1" size="1">
                             <span class="questionText">${number2}</span>
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
             }
@@ -212,7 +213,7 @@ function generateTestType (topic){
                 correctAnswers.push(correctAnswer);
                 output += `<div class="question" id="question${i}">
                             <span class="questionText">Round ${number} to closest ${division}</span>
-                            <input type="text" id="userAnswer${i}" class="question">
+                            <input type="text" id="userAnswer${i}" class="question" maxlength="5" size="5">
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
             }
         break;
@@ -226,8 +227,8 @@ function generateTestType (topic){
                 correctAnswers.push(correctAnswer);
                 output += `<div class="question" id="question${i}">
                             <span class="questionText">${isMultiplication ? number1 : result}</span>
-                            <span class="questionText underline">${isMultiplication ? "&times;" : "&div;"}${number2}</span>
-                            <input type="text" id="userAnswer${i}" class="question">
+                            <span class="questionText">${isMultiplication ? "&times;" : "&div;"}${number2}</span>
+                            <input type="text" id="userAnswer${i}" class="question" maxlength="4" size="4">
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
             }
         break;
@@ -242,8 +243,8 @@ function generateTestType (topic){
                 correctAnswers.push(correctAnswer);
                 output += `<div class="question" id="question${i}">
                             <span class="questionText">${isMultiplication ? number1 : result}</span>
-                            <span class="questionText underline">${isMultiplication ? "&times;" : "&div;"}${number2}</span>
-                            <input type="text" id="userAnswer${i}" class="question">
+                            <span class="questionText">${isMultiplication ? "&times;" : "&div;"}${number2}</span>
+                            <input type="text" id="userAnswer${i}" class="question" maxlength="6" size="6">
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
             }
         break;
@@ -257,8 +258,8 @@ function generateTestType (topic){
                 correctAnswers.push(correctAnswer);
                 output += `<div class="question" id="question${i}">
                             <span class="questionText">${isMultiplication ? number1 : result}</span>
-                            <span class="questionText underline">${isMultiplication ? "&times;" : "&div;"}${number2}</span>
-                            <input type="text" id="userAnswer${i}" class="question">
+                            <span class="questionText">${isMultiplication ? "&times;" : "&div;"}${number2}</span>
+                            <input type="text" id="userAnswer${i}" class="question" maxlength="6" size="6">
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
             }
         break;
@@ -271,8 +272,8 @@ function generateTestType (topic){
                 correctAnswers.push(correctAnswer);
                 output += `<div class="question" id="question${i}">
                             <span class="questionText">${number1}</span>
-                            <span class="questionText underline">${isAddition ? "+" : "&#8210;"}${number2}</span>
-                            <input type="text" id="userAnswer${i}" class="question">
+                            <span class="questionText">${isAddition ? "+" : "&#8210;"}${number2}</span>
+                            <input type="text" id="userAnswer${i}" class="question" maxlength="5" size="5">
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
             }
         break;
@@ -286,9 +287,9 @@ function generateTestType (topic){
                 let correctAnswer = isFirstNumberMissing ? number1 : number2;
                 correctAnswers.push(correctAnswer);
                 output += `<div class="question" id="question${i}">
-                            ${isFirstNumberMissing ? `<input type="text" id="userAnswer${i}" class="question"></input>` : `<span class="questionText">${number1}</span>`}
+                            ${isFirstNumberMissing ? `<input type="text" id="userAnswer${i}" class="question" maxlength="2" size="2"></input>` : `<span class="questionText">${number1}</span>`}
                             ${isAddition ? "+" : "&#8210;"}
-                            ${isFirstNumberMissing ? `<span class="questionText">${number2}</span>` : `<input type="text" id="userAnswer${i}" class="question"></input>`}
+                            ${isFirstNumberMissing ? `<span class="questionText">${number2}</span>` : `<input type="text" id="userAnswer${i}" class="question" maxlength="2" size="2"></input>`}
                             <span class="questionText">=${result}</span>
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
             }
@@ -301,7 +302,7 @@ function generateTestType (topic){
                 correctAnswers.push(correctAnswer);
                 output += `<div class="question" id="question${i}">
                             <span class="questionText">${number1} and ${number2}</span>
-                            <input type="text" id="userAnswer${i}" class="question">
+                            <input type="text" id="userAnswer${i}" class="question" maxlength="3" size="3">
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
             }
         break;
@@ -315,7 +316,7 @@ function generateTestType (topic){
                 output += `<div class="question" id="question${i}">
                             <span class="questionText">${number2} ${isAddition ? "more than" : "less than"}</span>
                             <span class="questionText">${number1}</span>
-                            <input type="text" id="userAnswer${i}" class="question">
+                            <input type="text" id="userAnswer${i}" class="question" maxlength="5" size="5">
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
             }
         break;
@@ -352,8 +353,8 @@ function generateTestType (topic){
                 correctAnswers.push(correctAnswer);
                 output += `<div class="question" id="question${i}">
                             <span class="questionText">${number1}</span>
-                            <span class="questionText underline">${isAddition ? "+" : "&#8210;"}${number2}</span>
-                            <input type="text" id="userAnswer${i}" class="question">
+                            <span class="questionText">${isAddition ? "+" : "&#8210;"}${number2}</span>
+                            <input type="text" id="userAnswer${i}" class="question" maxlength="5" size="5">
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
             }
         break;
@@ -376,5 +377,6 @@ function unlock (event){
     event.preventDefault();
     let userInput = event.srcElement[0].value;
     if (!userInput) return;
+    unlockField.value='';
     if(PASSWORD === userInput) renderer([],[cheatCover],false)
 }

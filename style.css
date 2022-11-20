@@ -6,7 +6,6 @@
 }
 
 #cheatCover{
-    /* background-color: brown; */
     height: 100vh;
     width: 100vw;
     position: fixed;
@@ -38,22 +37,21 @@ footer{
     font-weight: 700;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
+
 .test{
     display: grid;
     grid-gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 .question {
-    display: flex;
-    flex-direction: column;
     background-color: beige;
     border:2px solid gray;
     border-radius: 10px;
     font-size: xx-large;
     text-align: center;
 }
-.underline{
-    border-bottom: 2px solid black;
+.correctAnswer{
+    width:min-content;
 }
 #topicField{
     margin-top: 10px;
