@@ -151,7 +151,7 @@ function generateTestType (topic){
                 }
                 let isPrime = primeNumbers.includes(number);
                 correctAnswers.push(isPrime);
-                output += `<div class="question" id="question${i}">
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                             <span class="questionText">${number}</span>
                             <input type="radio" name="variants${i}" id="userAnswer${i}" value="true" class="invisible radio-colors"/>
                             <label for="userAnswer${i}">Prime</label>
@@ -178,7 +178,7 @@ function generateTestType (topic){
                 let correctAnswer = number ** exponent;
                 correctAnswers.push(correctAnswer);
                 let unicode = exponent <= 3 ? `&sup${exponent};` : `&#x207${exponent};`
-                output += `<div class="question" id="question${i}">
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                             <span class="questionText">${number}${unicode}</span>
                             <input type="text" id="userAnswer${i}" class="question" maxlength="4" size="4">
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
@@ -198,7 +198,7 @@ function generateTestType (topic){
                 let number2 = joinDigits(numberDigits);
                 let correctAnswer = number1 > number2 ? ">" : number1 < number2 ? "<" : "=";
                 correctAnswers.push(correctAnswer);
-                output += `<div class="question" id="question${i}">
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                             <span class="questionText">${number1}</span>
                             <input type="text" id="userAnswer${i}" class="question" maxlength="1" size="1">
                             <span class="questionText">${number2}</span>
@@ -211,7 +211,7 @@ function generateTestType (topic){
                 let number = generateRandomNumber(1111,9999)
                 let correctAnswer = Math.round(number/division)*division;
                 correctAnswers.push(correctAnswer);
-                output += `<div class="question" id="question${i}">
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                             <span class="questionText">Round ${number} to closest ${division}</span>
                             <input type="text" id="userAnswer${i}" class="question" maxlength="5" size="5">
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
@@ -225,7 +225,7 @@ function generateTestType (topic){
                 let isMultiplication = Math.random() < 0.5;
                 let correctAnswer = isMultiplication ? result : number1;
                 correctAnswers.push(correctAnswer);
-                output += `<div class="question" id="question${i}">
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                             <span class="questionText">${isMultiplication ? number1 : result}</span>
                             <span class="questionText">${isMultiplication ? "&times;" : "&div;"}${number2}</span>
                             <input type="text" id="userAnswer${i}" class="question" maxlength="4" size="4">
@@ -241,7 +241,7 @@ function generateTestType (topic){
                 let isMultiplication = Math.random() < 0.5;
                 let correctAnswer = isMultiplication ? result : number1;
                 correctAnswers.push(correctAnswer);
-                output += `<div class="question" id="question${i}">
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                             <span class="questionText">${isMultiplication ? number1 : result}</span>
                             <span class="questionText">${isMultiplication ? "&times;" : "&div;"}${number2}</span>
                             <input type="text" id="userAnswer${i}" class="question" maxlength="6" size="6">
@@ -256,7 +256,7 @@ function generateTestType (topic){
                 let result = number1*number2;
                 let correctAnswer = isMultiplication ? result : number1;
                 correctAnswers.push(correctAnswer);
-                output += `<div class="question" id="question${i}">
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                             <span class="questionText">${isMultiplication ? number1 : result}</span>
                             <span class="questionText">${isMultiplication ? "&times;" : "&div;"}${number2}</span>
                             <input type="text" id="userAnswer${i}" class="question" maxlength="6" size="6">
@@ -270,7 +270,7 @@ function generateTestType (topic){
                 let isAddition = Math.random() < 0.5;
                 let correctAnswer = isAddition ? number1 + number2 : number1 - number2;
                 correctAnswers.push(correctAnswer);
-                output += `<div class="question" id="question${i}">
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                             <span class="questionText">${number1}</span>
                             <span class="questionText">${isAddition ? "+" : "&#8210;"}${number2}</span>
                             <input type="text" id="userAnswer${i}" class="question" maxlength="5" size="5">
@@ -286,7 +286,7 @@ function generateTestType (topic){
                 let isFirstNumberMissing = Math.random() < 0.5;
                 let correctAnswer = isFirstNumberMissing ? number1 : number2;
                 correctAnswers.push(correctAnswer);
-                output += `<div class="question" id="question${i}">
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                             ${isFirstNumberMissing ? `<input type="text" id="userAnswer${i}" class="question" maxlength="2" size="2"></input>` : `<span class="questionText">${number1}</span>`}
                             ${isAddition ? "+" : "&#8210;"}
                             ${isFirstNumberMissing ? `<span class="questionText">${number2}</span>` : `<input type="text" id="userAnswer${i}" class="question" maxlength="2" size="2"></input>`}
@@ -300,7 +300,7 @@ function generateTestType (topic){
                 let number2 = generateRandomNumber(5,100);
                 let correctAnswer = number2 - number1;
                 correctAnswers.push(correctAnswer);
-                output += `<div class="question" id="question${i}">
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                             <span class="questionText">${number1} and ${number2}</span>
                             <input type="text" id="userAnswer${i}" class="question" maxlength="3" size="3">
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
@@ -313,7 +313,7 @@ function generateTestType (topic){
                 let isAddition = Math.random() < 0.5;
                 let correctAnswer = isAddition ? number1 + number2 : number1 - number2;
                 correctAnswers.push(correctAnswer);
-                output += `<div class="question" id="question${i}">
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                             <span class="questionText">${number2} ${isAddition ? "more than" : "less than"}</span>
                             <span class="questionText">${number1}</span>
                             <input type="text" id="userAnswer${i}" class="question" maxlength="5" size="5">
@@ -351,7 +351,7 @@ function generateTestType (topic){
                 }
                 let correctAnswer = isAddition ? number1 + number2 : number1 - number2;
                 correctAnswers.push(correctAnswer);
-                output += `<div class="question" id="question${i}">
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                             <span class="questionText">${number1}</span>
                             <span class="questionText">${isAddition ? "+" : "&#8210;"}${number2}</span>
                             <input type="text" id="userAnswer${i}" class="question" maxlength="5" size="5">

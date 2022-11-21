@@ -49,6 +49,8 @@ footer{
     border-radius: 10px;
     font-size: xx-large;
     text-align: center;
+    animation: testCardAppear 0.5s linear forwards;
+    visibility: hidden;
 }
 .correctAnswer{
     width:min-content;
@@ -88,4 +90,8 @@ footer{
 @keyframes topicSlide {
     0%   {opacity: 0;transform: translateX(-20px);visibility: visible;}
     100% {opacity: 1;transform: translateX(0);visibility: visible;}
-  }
+}
+@keyframes testCardAppear {
+    0%   {opacity: 0;visibility: visible;}
+    100% {opacity: 1;visibility: visible;}
+}
