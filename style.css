@@ -20,6 +20,9 @@ header{
 .radio-colors:checked + label {
     color: blue;
 }
+.radio-colors + label {
+    text-align: left;
+}
 
 
 /* Footer */
@@ -44,16 +47,42 @@ footer{
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 .question {
-    background-color: beige;
-    border:2px solid gray;
+    border:3px solid gray;
     border-radius: 10px;
     font-size: xx-large;
     text-align: center;
     animation: testCardAppear 0.5s linear forwards;
     visibility: hidden;
+
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    background: linear-gradient(to bottom right, azure, white, azure);
+    background: linear-gradient(to bottom right, ivory, white, ivory);
+    background: linear-gradient(to bottom right, snow, white, snow);
+    box-shadow: rgba(0, 0, 0, 0.25) 6px 6px 10px 0px;
+
+}
+.questionText{
+    text-align: center;
+}
+.answer{
+    width:max-content;
+    align-self: center;
+}
+.rightAlign{
+    text-align: right;
+    padding-right:2em;
+
+}
+.controls{
+    font-size: x-large;
+    -webkit-appearance: none; 
+    -moz-appearance: none; 
+    appearance: none;
 }
 .correctAnswer{
-    width:min-content;
+
 }
 #topicField{
     margin-top: 10px;
@@ -83,9 +112,7 @@ footer{
 .question-wrong{
     border-color: darkred;
 }
-.questionText{
-    text-align: center;
-}
+
 
 @keyframes topicSlide {
     0%   {opacity: 0;transform: translateX(-20px);visibility: visible;}
