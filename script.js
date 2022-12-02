@@ -1,16 +1,33 @@
 //Topic selection
-const TOPICS = {prime:{description:"Prime and composite numbers", type:"multianswer"},
-                compare:{description:"Compare two numbers", type:"compare"},
-                round:{description:"Round number to nearest", type:"input"},
-                sum:{description:"Addition and subtraction of 5-digit numbers", type:"input"},
-                multi:{description:"Multiply and divide", type:"input"},
-                multi10:{description:"Multiply and divide by 10, 100, 1000", type:"input"},
-                multi10multiples:{description:"Multiply and divide by multiples of 10, 100, 1000", type:"input"},
-                negative:{description:"Difference between positive and negative number", type:"input"},
-                more:{description:"1, 10, 100, 1000 more/less from given number", type:"input"},
-                efficient99:{description:"Efficient method to add/subtract 99, 999", type:"input"},
-                missing:{description:"Missing number", type:"input"},
-                power:{description:"Square, cube, exponent", type:"input"}};
+const TOPICS = {'Year 4':{more:{description:"1, 10, 100, 1000 more/less from given number", type:"input"},
+                    round:{description:"Round number to nearest", type:"input"},
+                    efficient99:{description:"Efficient method to add/subtract 99, 999", type:"input"},
+                    sum:{description:"Addition and subtraction of 5-digit numbers", type:"input"},
+                    multi:{description:"Multiply and divide", type:"input"},
+//difference bewteen 2 multiplies of 100 1k
+//add same to big and substractable, inverse +-
+//split number in few ways
+                    compare:{description:"Compare two numbers", type:"compare"},},
+
+                'Year 5':{prime:{description:"Prime and composite numbers", type:"multianswer"},
+                    multi10:{description:"Multiply and divide by 10, 100, 1000", type:"input"},
+                    sum:{description:"Addition and subtraction of 5-digit numbers", type:"input"},
+                    round:{description:"Round number to nearest", type:"input"},
+//roman to 10k
+//compare to 1m
+// split into hundreds, tens
+//missing digit in compared numbers
+//tables, graphs
+// factor trees
+//inverse x/
+//inverse +-
+                    negative:{description:"Difference between positive and negative number", type:"input"},
+                    area:{description:"Perimeter and area", type:"multiinput"},
+                    missing:{description:"Missing number", type:"input"},
+                    multi:{description:"Multiply and divide", type:"input"},
+                    multi10multiples:{description:"Multiply and divide by multiples of 10, 100, 1000", type:"input"},
+                    power:{description:"Square, cube, exponent", type:"input"}}}
+
 const PASSWORD = "check";
 const NUMBER_OF_QUESTIONS = 100;
 
@@ -27,26 +44,32 @@ const cheatCover = document.querySelector("#cheatCover");
 
 let correctAnswers = [];
 let userAnswers = [];
-let testType;
+let testType, testYear;
 let isAnticheatOn = false;
 
 //Topic render
 let topicOutput = '';
 const animationDelay = 0.1;
 let animationCounter = 0;
-for (let topic in TOPICS){
-    topicOutput += `<div class="topic" id="${topic}" onClick="generateTest(event)" style="animation-delay:${animationCounter*animationDelay}s">${TOPICS[topic].description}</div>`;
-    animationCounter++};
+for (let year in TOPICS){
+    topicOutput += `<div class="year" id="${year}">${year}`
+    for (let topic in TOPICS[year]){
+        topicOutput += `<div class="topic" id="${topic}" onClick="generateTest(event)" style="animation-delay:${animationCounter*animationDelay}s">${TOPICS[year][topic].description}</div>`;
+        animationCounter++};
+    topicOutput += `</div>`
+}
 topicField.innerHTML=topicOutput;
 
 
 function generateTest (event){
     let source = event.srcElement.id;
-    if (source !== 'repeatButton'){testType = event.srcElement.id;}
-    renderer([returnButton, testField, resultsCheckForm], [topicField, repeatButton], TOPICS[testType].description);
+    if (source !== 'repeatButton'){
+        testType = event.srcElement.id;
+        testYear = event.srcElement.parentElement.id;
+    }
+    renderer([returnButton, testField, resultsCheckForm], [topicField, repeatButton], TOPICS[testYear][testType].description);
     resetVariables();
     let output = generateTestType(testType);
-    console.log(correctAnswers)
     testField.innerHTML = output;
     repeatButton.addEventListener('click', generateTest); 
     isAnticheatOn = true;
@@ -64,7 +87,7 @@ function checkResults (event) {
 function showAnswers(){
     getUserAnswers();
     correctAnswers.forEach((correctAnswer, index) => {
-        let isCorrect = correctAnswer == userAnswers[index];
+        let isCorrect = Array.isArray(correctAnswer) ? correctAnswer.equals(userAnswers[index]) : correctAnswer === userAnswers[index];
         if(isCorrect) results++;
         const questionField = document.querySelector(`#question${index}`);
         const answerField = document.querySelector(`#correctAnswer${index}`);
@@ -92,6 +115,13 @@ function getUserAnswers (){
             for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
                 let userAnswer = document.querySelector(`#userAnswer${i}`).value;
                 userAnswers.push(userAnswer)
+            }
+        break;
+        case "area":
+            for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+                let userAnswerPerimeter = document.querySelector(`#userAnswer${i}Perimeter`).value;
+                let userAnswerArea = document.querySelector(`#userAnswer${i}Area`).value;
+                userAnswers.push([parseInt(userAnswerPerimeter),parseInt(userAnswerArea)])
             }
         break;
         default:
@@ -201,7 +231,7 @@ function generateTestType (topic){
                 output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                                 <div>
                                     <span class="questionText">${number1}</span>
-                                    <input type="text" id="userAnswer${i}" class="" maxlength="1" size="1">
+                                    <input type="text" id="userAnswer${i}" class="answer" maxlength="1" size="1">
                                     <span class="questionText">${number2}</span>
                                 </div>
                                 <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div>
@@ -233,7 +263,7 @@ function generateTestType (topic){
                                     <span class="questionText">${isMultiplication ? number1 : result}</span>
                                     <span class="questionText">${isMultiplication ? "&times;" : "&div;"}${number2}</span>
                                 </div>
-                                <input type="text" id="userAnswer${i}" class="" maxlength="4" size="4">
+                                <input type="text" id="userAnswer${i}" class="answer" maxlength="4" size="4">
                                 <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div>
                             </div>`;
             }
@@ -252,7 +282,7 @@ function generateTestType (topic){
                                     <span class="questionText">${isMultiplication ? number1 : result}</span>
                                     <span class="questionText">${isMultiplication ? "&times;" : "&div;"}${number2}</span>
                                 </div>
-                                <input type="text" id="userAnswer${i}" class="" maxlength="6" size="6">
+                                <input type="text" id="userAnswer${i}" class="answer" maxlength="6" size="6">
                                 <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div>
                             </div>`;
             }
@@ -270,7 +300,7 @@ function generateTestType (topic){
                                     <span class="questionText">${isMultiplication ? number1 : result}</span>
                                     <span class="questionText">${isMultiplication ? "&times;" : "&div;"}${number2}</span>
                                 </div>
-                                <input type="text" id="userAnswer${i}" class="" maxlength="6" size="6">
+                                <input type="text" id="userAnswer${i}" class="answer" maxlength="6" size="6">
                                 <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div>
                             </div>`;
             }
@@ -299,9 +329,9 @@ function generateTestType (topic){
                 correctAnswers.push(correctAnswer);
                 output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                                 <div>
-                                    ${isFirstNumberMissing ? `<input type="text" id="userAnswer${i}" class="" maxlength="2" size="2"></input>` : `<span class="questionText">${number1}</span>`}
+                                    ${isFirstNumberMissing ? `<input type="text" id="userAnswer${i}" class="answer" maxlength="2" size="2"></input>` : `<span class="questionText">${number1}</span>`}
                                     ${isAddition ? "+" : "&#8210;"}
-                                    ${isFirstNumberMissing ? `<span class="questionText">${number2}</span>` : `<input type="text" id="userAnswer${i}" class="" maxlength="2" size="2"></input>`}
+                                    ${isFirstNumberMissing ? `<span class="questionText">${number2}</span>` : `<input type="text" id="userAnswer${i}" class="answer" maxlength="2" size="2"></input>`}
                                     <span class="questionText">=${result}</span>
                                 </div>
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
@@ -370,9 +400,33 @@ function generateTestType (topic){
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
             }
         break;
+        case "area":
+            for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+                let side1 = generateRandomNumber(1,5);
+                let side2 = generateRandomNumber(1,5);
+                let correctAnswer = [2*side1 + 2*side2, side1 * side2]
+                correctAnswers.push(correctAnswer);
+                let rectWidth = side1*30;
+                let rectHeight = side2*30;
+                let rectX = 40+(150-side1*30)/2;
+                let rectY = 40+(150-side2*30)/2;
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
+                            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="${rectX}" y="${rectY}" width="${rectWidth}" height="${rectHeight}" fill="lightgrey"/>
+                                <text x="110" y="${rectY-15}" class="small">${side1}</text>
+                                <text x="${rectX-30}" y="120" class="heavy">${side2}</text>
+                            </svg>
+                            <div class="rightAlign"><label for="perimeter${i}" >Perimeter:</label>
+                            <input type="text" id="userAnswer${i}Perimeter" name="perimeter${i}" class="answer " maxlength="2" size="2" style="float:right"></div>
+                            <div class="rightAlign"><label for="area${i}" >Area:</label>
+                            <input type="text" id="userAnswer${i}Area" name="area${i}" class="answer " maxlength="2" size="2" style="float:right"></div>
+                            <div id="correctAnswer${i}" class="correctAnswer hidden">P: ${correctAnswer[0]} A: ${correctAnswer[1]}</div></div>`;
+            }
+        break;
         default:
             console.error("Error in test type function")
     }
+    console.log(correctAnswers)
     return output;
 }
 function joinDigits (numberDigits){ //converts array of digits [1,2,3,4] into integer 1234
@@ -391,4 +445,23 @@ function unlock (event){
     if (!userInput) return;
     unlockField.value='';
     if(PASSWORD === userInput) renderer([],[cheatCover],false)
+}
+
+Array.prototype.equals = function (array) {
+    if (!array)
+        return false;
+    if(array === this)
+        return true;
+    if (this.length != array.length)
+        return false;
+    for (var i = 0, l=this.length; i < l; i++) {
+        if (this[i] instanceof Array && array[i] instanceof Array) {
+            if (!this[i].equals(array[i]))
+                return false;       
+        }           
+        else if (this[i] != array[i]) { 
+            return false;   
+        }           
+    }       
+    return true;
 }

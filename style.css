@@ -12,6 +12,16 @@
     z-index: 100;
     -webkit-backdrop-filter: blur(10px);
 }
+.wrapper{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+.cheatAlert{
+    color:darkred;
+}
 header{
     margin-bottom: 10px;
 }
@@ -49,7 +59,7 @@ footer{
 .question {
     border:3px solid gray;
     border-radius: 10px;
-    font-size: xx-large;
+    font-size: x-large;
     text-align: center;
     animation: testCardAppear 0.5s linear forwards;
     visibility: hidden;
@@ -58,8 +68,8 @@ footer{
     flex-direction: column;
     padding: 5px;
     background: linear-gradient(to bottom right, azure, white, azure);
-    background: linear-gradient(to bottom right, ivory, white, ivory);
-    background: linear-gradient(to bottom right, snow, white, snow);
+    /* background: linear-gradient(to bottom right, ivory, white, ivory); */
+    /* background: linear-gradient(to bottom right, snow, white, snow); */
     box-shadow: rgba(0, 0, 0, 0.25) 6px 6px 10px 0px;
 
 }
@@ -69,14 +79,23 @@ footer{
 .answer{
     width:max-content;
     align-self: center;
+    border:3px solid gray;
+    border-radius: 10px;
+    font-size: x-large;
+}
+.year{
+    margin-top: 2rem;
+}
+.drawRectangle{
+    background-color: gray;
 }
 .rightAlign{
     text-align: right;
-    padding-right:2em;
+    padding-right:2rem;
 
 }
 .controls{
-    font-size: x-large;
+    font-size: larger;
     -webkit-appearance: none; 
     -moz-appearance: none; 
     appearance: none;
@@ -90,9 +109,15 @@ footer{
 }
 .topic{
     background-color: beige;
+    padding: 10px 15px;
     margin-bottom: 5px;
     animation: topicSlide 0.5s linear forwards;
     visibility: hidden;
+    margin-top: 1rem;
+    border-radius: 8px;
+}
+.topic:nth-child(2n){
+    background-color: papayawhip;
 }
 .invisible{
     display: none;
