@@ -6,15 +6,16 @@ const TOPICS = {'Year 4':{more:{description:"1, 10, 100, 1000 more/less from giv
                     sum100:{description:"Addition and subtraction of multiplies of 100 1000", type:"input"},
                     multi:{description:"Multiply and divide", type:"input"},
                     factFamily:{description:"Inverse addition, subtraction. Fact families", type:"input"},
+                    missing:{description:"Missing number", type:"input"},
 //split number in few ways
                     compare:{description:"Compare two numbers", type:"compare"},},
 
                 'Year 5':{prime:{description:"Prime and composite numbers", type:"multianswer"},
+                    factors:{description:"Split number into prime factors", type:"multiinput"},
                     multi10:{description:"Multiply and divide by 10, 100, 1000", type:"input"},
                     sum:{description:"Addition and subtraction of 5-digit numbers", type:"input"},
                     round:{description:"Round number to nearest", type:"input"},
                     roman:{description:"Roman numbers to 4 000", type:"compare"},
-                    factors:{description:"Split number into prime factors", type:"multiinput"},
                     compare1M:{description:"Compare two numbers to 1 million", type:"compare"},
                     factFamily:{description:"Inverse addition, subtraction. Fact families", type:"input"},
 // split into hundreds, tens
@@ -29,7 +30,7 @@ const TOPICS = {'Year 4':{more:{description:"1, 10, 100, 1000 more/less from giv
                     multi10multiples:{description:"Multiply and divide by multiples of 10, 100, 1000", type:"input"},
                     power:{description:"Square, cube, exponent", type:"input"}}}
 
-const PASSWORD = "check";
+const PASSWORD = "math1";
 const NUMBER_OF_QUESTIONS = 100;
 
 const topicField = document.querySelector("#topicField");
