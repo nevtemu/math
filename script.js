@@ -3,9 +3,9 @@ const TOPICS = {'Year 4':{more:{description:"1, 10, 100, 1000 more/less from giv
                     round:{description:"Round number to nearest", type:"input"},
                     efficient99:{description:"Efficient method to add/subtract 99, 999", type:"input"},
                     sum:{description:"Addition and subtraction of 5-digit numbers", type:"input"},
+                    sum100:{description:"Addition and subtraction of multiplies of 100 1000", type:"input"},
                     multi:{description:"Multiply and divide", type:"input"},
-//difference bewteen 2 multiplies of 100 1k
-//add same to big and substractable, inverse +-
+                    factFamily:{description:"Inverse addition, subtraction. Fact families", type:"input"},
 //split number in few ways
                     compare:{description:"Compare two numbers", type:"compare"},},
 
@@ -13,14 +13,15 @@ const TOPICS = {'Year 4':{more:{description:"1, 10, 100, 1000 more/less from giv
                     multi10:{description:"Multiply and divide by 10, 100, 1000", type:"input"},
                     sum:{description:"Addition and subtraction of 5-digit numbers", type:"input"},
                     round:{description:"Round number to nearest", type:"input"},
-//roman to 10k
-//compare to 1m
+                    roman:{description:"Roman numbers to 4 000", type:"compare"},
+                    factors:{description:"Split number into prime factors", type:"multiinput"},
+                    compare1M:{description:"Compare two numbers to 1 million", type:"compare"},
+                    factFamily:{description:"Inverse addition, subtraction. Fact families", type:"input"},
 // split into hundreds, tens
 //missing digit in compared numbers
 //tables, graphs
 // factor trees
 //inverse x/
-//inverse +-
                     negative:{description:"Difference between positive and negative number", type:"input"},
                     area:{description:"Perimeter and area", type:"multiinput"},
                     missing:{description:"Missing number", type:"input"},
@@ -105,23 +106,29 @@ function getUserAnswers (){
                 userAnswer ? userAnswers.push(userAnswer.value === "true" ? true : false) : userAnswers.push("No answer");
             }
         break;
-        case "power": case "round": case "sum": case "multi": case "multi10": case "multi10multiples": case "negative": case "more": case "efficient99": case "missing":
+        case "power": case "round": case "factFamily": case "sum": case "sum100": case "multi": case "multi10": case "multi10multiples": case "negative": case "more": case "efficient99": case "missing":
             for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
-                let userAnswer = document.querySelector(`#userAnswer${i}`).value;
+                let userAnswer = document.querySelector(`#userAnswer${i}`).value.trim();
                 userAnswers.push(parseInt(userAnswer))
             }
         break;
-        case "compare":
+        case "compare": case "roman": case "compare1M":
             for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
-                let userAnswer = document.querySelector(`#userAnswer${i}`).value;
+                let userAnswer = document.querySelector(`#userAnswer${i}`).value.trim();
                 userAnswers.push(userAnswer)
             }
         break;
         case "area":
             for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
-                let userAnswerPerimeter = document.querySelector(`#userAnswer${i}Perimeter`).value;
-                let userAnswerArea = document.querySelector(`#userAnswer${i}Area`).value;
+                let userAnswerPerimeter = document.querySelector(`#userAnswer${i}Perimeter`).value.trim();
+                let userAnswerArea = document.querySelector(`#userAnswer${i}Area`).value.trim();
                 userAnswers.push([parseInt(userAnswerPerimeter),parseInt(userAnswerArea)])
+            }
+        break;
+        case "factors":
+            for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+                let userAnswer = document.querySelector(`#userAnswer${i}`).value.split(" ").sort();
+                userAnswers.push(userAnswer);
             }
         break;
         default:
@@ -138,10 +145,6 @@ returnButton.addEventListener('click', returnToTopics);
 function returnToTopics () {
     renderer([topicField],[repeatButton, returnButton, testField, resultsCheckForm]);
     isAnticheatOn = false;
-}
-
-function generateRandomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function renderer (visibleElements, invisibleElements, header = "Choose your topic:"){ //header=false to keep same value
@@ -165,7 +168,6 @@ function generateTestType (topic){
     let output = '';
     switch(topic){
         case "prime":
-            const primeNumbers = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97];
             for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
                 let number;
                 //Make numbers unique (not repeated if possible)
@@ -179,7 +181,7 @@ function generateTestType (topic){
                 else {
                     number = generateRandomNumber(2,100);
                 }
-                let isPrime = primeNumbers.includes(number);
+                let isPrime = isPrime(number);
                 correctAnswers.push(isPrime);
                 output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                             <span class="questionText">${number}</span>
@@ -238,6 +240,58 @@ function generateTestType (topic){
                             </div>`;
             }
         break;
+        case "compare1M":
+            for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+                let numberDigits = [];
+                for (let j = 0; j < 6; j++){
+                    let digit = generateRandomNumber(j == 0 ? 1 : 0, 9);
+                    numberDigits.push(digit);
+                }
+                let number1 = joinDigits(numberDigits);
+                for (let k = 0; k < 2; k++){
+                    numberDigits[generateRandomNumber(0,numberDigits.length - 1)] = generateRandomNumber(1,9);
+                }
+                let number2 = joinDigits(numberDigits);
+                let correctAnswer = number1 > number2 ? ">" : number1 < number2 ? "<" : "=";
+                correctAnswers.push(correctAnswer);
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
+                                <div>
+                                    <span class="questionText">${number1}</span>
+                                    <input type="text" id="userAnswer${i}" class="answer" maxlength="1" size="1">
+                                    <span class="questionText">${number2}</span>
+                                </div>
+                                <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div>
+                            </div>`;
+            }
+        break;
+        case "roman":
+            for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+                let number = generateRandomNumber(1,3999);
+                let romanNumber = convertToRoman(number);
+                let isRoman = Math.random() < 0.5;
+                let correctAnswer = isRoman ? number : romanNumber;
+                correctAnswers.push(correctAnswer);
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
+                                <span class="questionText">${isRoman ? romanNumber : number}</span>
+                                <input type="text" id="userAnswer${i}" class="answer" maxlength="12" size="12">
+                                <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div>
+                            </div>`;
+            }
+        break;
+        case "factors":
+            for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+                let number;
+                do {number = generateRandomNumber(9,100)}
+                while(isPrime(number))
+                let correctAnswer = getPrimeFactorsOfNumber(number).sort();
+                correctAnswers.push(correctAnswer);
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
+                                <span class="questionText">${number}</span>
+                                <input type="text" id="userAnswer${i}" class="answer" maxlength="12" size="12">
+                                <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div>
+                            </div>`;
+            }
+        break;
         case "round":
             for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
                 let division = 10**(i%3+1); //To rotate between 10, 100, 1000
@@ -252,20 +306,31 @@ function generateTestType (topic){
         break;
         case "multi":
             for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
-                let number1 = generateRandomNumber(0,12);
-                let number2 = generateRandomNumber(1,12);
-                let result = number1*number2;
-                let isMultiplication = Math.random() < 0.5;
-                let correctAnswer = isMultiplication ? result : number1;
-                correctAnswers.push(correctAnswer);
-                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
-                                <div>
-                                    <span class="questionText">${isMultiplication ? number1 : result}</span>
-                                    <span class="questionText">${isMultiplication ? "&times;" : "&div;"}${number2}</span>
-                                </div>
-                                <input type="text" id="userAnswer${i}" class="answer" maxlength="4" size="4">
-                                <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div>
-                            </div>`;
+                if(Math.random()<0.9){
+                    let number1 = generateRandomNumber(0,12);
+                    let number2 = generateRandomNumber(1,12);
+                    let result = number1*number2;
+                    let isMultiplication = Math.random() < 0.5;
+                    let correctAnswer = isMultiplication ? result : number1;
+                    correctAnswers.push(correctAnswer);
+                    output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
+                                    <span class="questionText">${isMultiplication ? number1 : result}${isMultiplication ? "&times;" : "&div;"}${number2}</span>
+                                    <input type="text" id="userAnswer${i}" class="answer" maxlength="4" size="4">
+                                    <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div>
+                                </div>`;
+                }
+                else {
+                    let number1 = generateRandomNumber(2,5);
+                    let number2 = generateRandomNumber(2,12 - number1);
+                    let number3 = generateRandomNumber(1,12 - number1 - number2);
+                    let correctAnswer = number1*number2*number3;
+                    correctAnswers.push(correctAnswer);
+                    output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
+                                    <span class="questionText">${number1}&times;${number2}&times;${number3}</span>
+                                    <input type="text" id="userAnswer${i}" class="answer" maxlength="4" size="4">
+                                    <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div>
+                                </div>`;
+                }
             }
         break;
         case "multi10":
@@ -400,6 +465,124 @@ function generateTestType (topic){
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
             }
         break;
+        case "sum100":
+            for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+                if(Math.random()<0.5){
+                    console.log("+")
+                    let isAddition = Math.random() < 0.5;
+                    let multiplier = Math.pow(10, generateRandomNumber(1,3))
+                    let number1, number2, correctAnswer;
+                    if (isAddition){ //Addition
+                        number1 = generateRandomNumber(2,95);
+                        number2 = generateRandomNumber(2,99-number1);
+                        correctAnswer = (number1 + number2)*multiplier;
+                    } else { //Subtraction
+                        number1 = generateRandomNumber(9,99);
+                        number2 = generateRandomNumber(2,number1-2);
+                        correctAnswer = (number1 - number2)*multiplier;
+                    }
+                    correctAnswers.push(correctAnswer);
+                    output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
+                                <span class="questionText">${number1*multiplier}${isAddition ? "+" : "&#8210;"}${number2*multiplier}</span>
+                                <input type="text" id="userAnswer${i}" class="answer" maxlength="5" size="5">
+                                <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
+                }else{
+                    let numberDigits = [];
+                    for (let j = 0; j < 4; j++){
+                        let digit = generateRandomNumber(j == 0 ? 1 : 0, 9);
+                        numberDigits.push(digit);
+                    }
+                    let index = generateRandomNumber(0,numberDigits.length - 2);
+                    let digit1 = generateRandomNumber(5,9);
+                    let digit2 = generateRandomNumber(0,digit1-1);
+                    numberDigits[index] = digit1;
+                    let number1 = joinDigits(numberDigits);
+                    numberDigits[index] = digit2;
+                    let number2 = joinDigits(numberDigits);
+                    correctAnswer = number1 - number2;
+                    correctAnswers.push(correctAnswer);
+                    output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
+                                <span class="questionText">${number1}&#8210;${number2}</span>
+                                <input type="text" id="userAnswer${i}" class="answer" maxlength="5" size="5">
+                                <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
+                }
+            }
+        break;
+        case "factFamily":
+            for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+                let type = generateRandomNumber(1,4);
+                let number1, number2, result, correctAnswer, question, modifier;
+                switch(type){
+                    case 1://Addition
+                        number1 = generateRandomNumber(999,9950);
+                        number2 = generateRandomNumber(999,9999-number1);
+                        result = number1 + number2;
+                        question = `<span class="questionText">${number1}+${number2}=${result}</span>
+                                    <div>
+                                        <span class="questionText">${result}&#8210;${number2}=</span>
+                                        <input type="text" id="userAnswer${i}" class="answer" maxlength="5" size="5">
+                                    </div>`
+                        correctAnswer = result - number2;
+                    break;
+                    case 2://Subtraction
+                        number1 = generateRandomNumber(5000,9950);
+                        number2 = generateRandomNumber(999,number1 - 999);
+                        result = number1 - number2;
+                        question = `<span class="questionText">${number1}&#8210;${number2}=${result}</span>
+                                    <div>
+                                        <span class="questionText">${result}+${number2}=</span>
+                                        <input type="text" id="userAnswer${i}" class="answer" maxlength="5" size="5">
+                                    </div>`
+                        correctAnswer = result + number2;
+                    break;
+                    case 3://Modified addition
+                        if(Math.random() < 0.5){
+                            number1 = generateRandomNumber(12,89);
+                            number2 = generateRandomNumber(10,99 - number1);
+                            modifier = generateRandomNumber(1,9)*Math.pow(10,generateRandomNumber(2,3))
+                        }
+                        else{
+                            number1 = generateRandomNumber(2,8)*100;
+                            number2 = generateRandomNumber(1,number1/100 - 1)*100;
+                            modifier = generateRandomNumber(1,99);
+                        }
+                        result = number1 + number2;
+                        question = `<span class="questionText">${number1}+${number2}=${result}</span>
+                                    <div>
+                                        <span class="questionText">${number1+modifier}+${number2}=</span>
+                                        <input type="text" id="userAnswer${i}" class="answer" maxlength="5" size="5">
+                                    </div>`
+                        correctAnswer = result + modifier;
+                    break;
+                    case 4://Modified subtraction
+                        if(Math.random() < 0.5){
+                            number1 = generateRandomNumber(10,95);
+                            number2 = generateRandomNumber(4,number1 - 3);
+                            modifier = generateRandomNumber(1,9)*Math.pow(10,generateRandomNumber(2,3))
+                        }
+                        else{
+                            number1 = generateRandomNumber(4,9)*100;
+                            number2 = generateRandomNumber(1,number1/100 - 1)*100;
+                            modifier = generateRandomNumber(1,99);
+                        }
+                        result = number1 - number2;
+                        console.table(number1,number2,result)
+                        question = `<span class="questionText">${number1}&#8210;${number2}=${result}</span>
+                                    <div>
+                                        <span class="questionText">${number1+modifier}&#8210;${number2+modifier}=</span>
+                                        <input type="text" id="userAnswer${i}" class="answer" maxlength="5" size="5">
+                                    </div>`
+                        correctAnswer = result;
+                    break;
+                    default:
+                        console.error("Error in test type function")
+                }
+                correctAnswers.push(correctAnswer);
+                output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
+                            ${question}
+                            <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
+            }
+        break;
         case "area":
             for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
                 let side1 = generateRandomNumber(1,5);
@@ -464,4 +647,38 @@ Array.prototype.equals = function (array) {
         }           
     }       
     return true;
+}
+
+function convertToRoman (number) {
+    let values = {M:1000,CM:900,D:500,CD:400,C:100,XC:90,L:50,XL:40,X:10,IX:9,V:5,IV:4,I:1}
+    let roman = '';
+    for (let i in values) {
+        while (number >= values[i]) {
+            roman += i;
+            number -= values[i];
+        }
+    }
+    return roman;
+}
+
+function getPrimeFactorsOfNumber (number) {
+    let factors = [];
+    let divider = 2;
+    while (number >= 2) {
+        if (number % divider == 0) {
+            factors.push(divider);
+            number /= divider;
+        } else {
+            divider++;
+        }
+    }
+    return factors;
+}
+function generateRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function isPrime (number) {
+    for(let i = 2, s = Math.sqrt(number); i <= s; i++)
+        if(number % i === 0) return false; 
+    return number > 1;
 }
