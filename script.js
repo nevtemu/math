@@ -182,8 +182,7 @@ function generateTestType (topic){
                 else {
                     number = generateRandomNumber(2,100);
                 }
-                let isPrime = isPrime(number);
-                correctAnswers.push(isPrime);
+                correctAnswers.push(isPrime(number));
                 output += `<div class="question" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
                             <span class="questionText">${number}</span>
                             <input type="radio" name="variants${i}" id="userAnswer${i}" value="true" class="invisible radio-colors"/>
