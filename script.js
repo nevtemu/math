@@ -28,6 +28,7 @@ const TOPICS = {'Year 4':{more:{description:"1, 10, 100, 1000 more/less from giv
                     missing:{description:"Missing number", type:"input"},
                     multi:{description:"Multiply and divide", type:"input"},
                     multi10multiples:{description:"Multiply and divide by multiples of 10, 100, 1000", type:"input"},
+                    sumFractions:{description:"Adding and subtracting mixed number fractions", type:"multiinput"},
                     power:{description:"Square, cube, exponent", type:"input"}}}
 
 const PASSWORD = "math1";
@@ -124,6 +125,14 @@ function getUserAnswers (){
                 let userAnswerPerimeter = document.querySelector(`#userAnswer${i}Perimeter`).value.trim();
                 let userAnswerArea = document.querySelector(`#userAnswer${i}Area`).value.trim();
                 userAnswers.push([parseInt(userAnswerPerimeter),parseInt(userAnswerArea)])
+            }
+        break;
+        case "sumFractions":
+            for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+                let userAnswerUpper = parseInt(document.querySelector(`#userAnswer${i}numerator`).value.trim());
+                let userAnswerWhole = parseInt(document.querySelector(`#userAnswer${i}whole`).value.trim());
+                let userAnswerLower = parseInt(document.querySelector(`#userAnswer${i}denominator`).value.trim());
+                userAnswers.push([userAnswerUpper+userAnswerWhole*userAnswerLower,userAnswerLower])
             }
         break;
         case "factors":
@@ -583,6 +592,33 @@ function generateTestType (topic){
                             <div id="correctAnswer${i}" class="correctAnswer hidden">${correctAnswer}</div></div>`;
             }
         break;
+        case "sumFractions":
+            for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
+                let isAddition = Math.random() < 0.5;
+                let isFirstMixed = Math.random() < 0.5;
+                let numerator1, numerator2, result, correctAnswer;
+                let denominator = generateRandomNumber(2,9);
+                if (isAddition){ //Addition
+                    numerator1 = generateRandomNumber(1,denominator*5);
+                    numerator2 = generateRandomNumber(1,denominator*5);
+                    result = numerator1 + numerator2;
+                    correctAnswer = [result, denominator];
+                } else { //Subtraction
+                    numerator1 = generateRandomNumber(2,denominator*9);
+                    numerator2 = generateRandomNumber(1,numerator1-1);
+                    result = numerator1 - numerator2;
+                    correctAnswer = [result, denominator];
+                }
+                correctAnswers.push(correctAnswer);
+                output += `<div class="question flexRow" id="question${i}" style="animation-delay:${i*animationDelay/4}s">
+                            ${generateFractionTag(numerator1,denominator,i, isFirstMixed)}    
+                            <div>${isAddition ? "+" : "&#8210;"}</div>
+                            ${generateFractionTag(numerator2,denominator,i, !isFirstMixed)}
+                            <div>=</div>
+                            ${generateFractionTag(false,false,i,true)}
+                            <div id="correctAnswer${i}" class="correctAnswer hidden">${generateFractionTag(result,denominator,i, false)}</div></div>`;
+            }
+        break;
         case "area":
             for (let i = 0; i < NUMBER_OF_QUESTIONS; i++){
                 let side1 = generateRandomNumber(1,5);
@@ -617,7 +653,7 @@ function joinDigits (numberDigits){ //converts array of digits [1,2,3,4] into in
 }
 
 //Cheat check
-window.addEventListener('focus', cheatCatch);
+// window.addEventListener('focus', cheatCatch);
 function cheatCatch (){
     if (isAnticheatOn){renderer([cheatCover],[],false)}
 }
@@ -681,4 +717,15 @@ function isPrime (number) {
     for(let i = 2, s = Math.sqrt(number); i <= s; i++)
         if(number % i === 0) return false; 
     return number > 1;
+}
+function generateFractionTag(numerator, denominator, i, isMixedFraction){
+    let whole, upper, lower;
+    if (typeof isMixedFraction === 'undefined') {isMixedFraction = Math.random() < 0.5;}
+    if (isMixedFraction && numerator !== false) {
+        whole = numerator >= denominator ? Math.floor(numerator/denominator) : ``;
+        numerator = numerator - denominator*whole;
+    }
+    upper = numerator === false ? `<input type="text" id="userAnswer${i}numerator" name="numerator${i}" class="answer" maxlength="2" size="2" style="float:right">` :  numerator === 0 ? `` : `<div class="questionText">${numerator}</div>`;
+    lower = denominator === false ? `<input type="text" id="userAnswer${i}denominator" name="denominator${i}" class="answer" maxlength="2" size="2" style="float:right">` : `<div class="questionText">${denominator}</div>`;
+    return `<div>${isMixedFraction ? denominator === false ? `<input type="text" id="userAnswer${i}whole" name="whole${i}" class="answer" maxlength="2" size="2" style="float:right">` : whole : ``}</div><div class="fraction">${upper}${lower}</div>`
 }
